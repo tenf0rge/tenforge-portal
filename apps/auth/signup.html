@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>アカウント作成 | Tenforge</title>
+    <link rel="stylesheet" href="./static/css/style.css">
+  </head>
+  <body>
+    <main>
+      <section class="auth-card">
+        <h1>アカウント作成</h1>
+        <form id="signup-form">
+          <label>
+            メールアドレス
+            <input id="email" type="email" autocomplete="email" required>
+          </label>
+          <label>
+            パスワード
+            <input id="password" type="password" autocomplete="new-password" required>
+          </label>
+          <label>
+            パスワード確認
+            <input id="password-confirmation" type="password" autocomplete="new-password" required>
+          </label>
+          <button type="submit">作成する</button>
+        </form>
+        <p id="message" class="message" aria-live="polite"></p>
+        <nav class="links" aria-label="認証リンク">
+          <a href="./index.html">ログインへ戻る</a>
+        </nav>
+      </section>
+    </main>
+    <script>
+      window.__SUPABASE_URL__ = '';
+      window.__SUPABASE_ANON_KEY__ = '';
+    </script>
+    <script type="module">
+      import { supabase } from './static/js/supabase-client.js';
+
+      const form = document.getElementById('signup-form');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const passwordConfirmationInput = document.getElementById('password-confirmation');
+      const message = document.getElementById('message');
+
+      const showMessage = (text, type = '') => {
+        message.textContent = text;
+        message.className = `message ${type}`.trim();
+      };
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        showMessage('');
+
+        if (passwordInput.value !== passwordConfirmationInput.value) {
+          showMessage('パスワードが一致しません。', 'error');
+          return;
+        }
+
+        const { error } = await supabase.auth.signUp({
+          email: emailInput.value,
+          password: passwordInput.value,
+          options: {
+            emailRedirectTo: 'https://auth.tenforge.dev/callback.html',
+          },
+        });
+
+        if (error) {
+          showMessage('アカウント作成に失敗しました。入力内容を確認してください。', 'error');
+          return;
+        }
+
+        form.reset();
+        showMessage('確認メールを送信しました。受信箱を確認してください。', 'success');
+      });
+    </script>
+  </body>
+</html>

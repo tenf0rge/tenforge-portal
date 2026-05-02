@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>認証確認 | Tenforge</title>
+    <link rel="stylesheet" href="./static/css/style.css">
+  </head>
+  <body>
+    <main>
+      <section class="auth-card">
+        <h1>認証確認</h1>
+        <p id="message" class="message" aria-live="polite">認証状態を確認しています。</p>
+        <nav id="login-link" class="links" aria-label="認証リンク" hidden>
+          <a href="./index.html">ログインへ戻る</a>
+        </nav>
+      </section>
+    </main>
+    <script>
+      window.__SUPABASE_URL__ = '';
+      window.__SUPABASE_ANON_KEY__ = '';
+    </script>
+    <script type="module">
+      import { supabase } from './static/js/supabase-client.js';
+
+      const message = document.getElementById('message');
+      const loginLink = document.getElementById('login-link');
+
+      const showMessage = (text, type = '') => {
+        message.textContent = text;
+        message.className = `message ${type}`.trim();
+      };
+
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error || !data.session) {
+        showMessage('認証に失敗しました。もう一度ログインしてください。', 'error');
+        loginLink.hidden = false;
+      } else {
+        showMessage('認証が完了しました。Tenforge に移動します。', 'success');
+        window.setTimeout(() => {
+          window.location.href = 'https://tenforge.dev';
+        }, 2000);
+      }
+    </script>
+  </body>
+</html>
