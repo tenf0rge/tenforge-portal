@@ -21,10 +21,12 @@ ADR-0001 にて認証・ID管理方式の選択肢を整理し、方針を決定
 
 | レイヤー | 技術 |
 |---|---|
-| バックエンド | 未定（ADR-0001 で決定） |
+| バックエンド | 未定 |
 | フロントエンド | 未定 |
-| DB / ストレージ | 未定 |
-| インフラ | Docker Compose |
+| 認証・ID管理 | Supabase Auth（ADR-0001） |
+| DB / ストレージ | Supabase（PostgreSQL） |
+| 決済・マネタイズ | Stripe |
+| インフラ | Docker Compose + nginx（VPS: tenforge.dev） |
 
 ---
 
