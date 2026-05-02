@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ${KAKEIBO_DATA:-~/.kakeibo.json}:/home/appuser/.kakeibo.json
+      - ${KAKEIBO_BUDGET:-~/.kakeibo-budget.json}:/home/appuser/.kakeibo-budget.json
+    env_file: .env
