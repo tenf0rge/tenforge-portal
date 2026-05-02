@@ -16,6 +16,21 @@
    - **Project URL** (`SUPABASE_URL`)
    - **Anon Key** (`SUPABASE_ANON_KEY`)
 
+### 1-1. Google OAuth 設定（オプション）
+
+Google ソーシャルログインを有効にする場合:
+
+1. [Google Cloud Console](https://console.cloud.google.com) でプロジェクト作成
+2. API を有効化: Google+ API
+3. OAuth 2.0 認証情報を作成（OAuth client ID）
+4. **承認済みリダイレクト URI** に以下を追加:
+   ```
+   https://xxxx.supabase.co/auth/v1/callback
+   ```
+   （`xxxx` は自分の Supabase Project URL）
+5. Client ID と Client Secret をコピー
+6. Supabase ダッシュボード → Settings → Auth Providers → Google に設定
+
 ---
 
 ## ステップ 2: VPS に auth app をデプロイ
@@ -37,7 +52,12 @@ cat > .env <<EOF
 SUPABASE_URL=https://xxxx.supabase.co
 SUPABASE_ANON_KEY=xxxx
 EOF
+
+# .env は git で追跡しないようにコミット済み（.gitignore）
+chmod 600 .env
 ```
+
+**注意:** `.env` ファイルは VPS 上でのみ作成し、リポジトリに含めないこと。
 
 ### 2-3. VPS で nginx 設定を追加・リロード
 
@@ -70,7 +90,16 @@ docker-compose logs -f
 sudo certbot --nginx -d auth.tenforge.dev
 ```
 
+certbot は自動で nginx 設定を更新し、HTTP → HTTPS リダイレクトを追加します。
+
 確認: `https://auth.tenforge.dev` で HTTPS アクセス可能か
+
+### SSL 更新（自動更新）
+
+```bash
+# 証明書の自動更新を確認
+sudo systemctl list-timers | grep certbot
+```
 
 ---
 
